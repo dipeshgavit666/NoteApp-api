@@ -10,6 +10,6 @@ connectDB()
         })
     })
     .catch((error) => {
-        console.error("mongoDb connection error", error);
+        console.error("mongoDb connection error from indexjs", error);
         
     })

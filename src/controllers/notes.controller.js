@@ -1,5 +1,9 @@
 import Note from "../models/notes.model.js"
 
+// view all notes
+const getAllNotes = async(req, res) => {
+    const notes = await Note.findOne()
+}
 
 //  create Note
 const createNote = async(req, res) => {
@@ -20,6 +24,7 @@ const createNote = async(req, res) => {
         });
         res.status(200).json({
             success: true,
+            message: "Note created successfully",
             data: newNote
         })
     } catch (error) {
@@ -33,12 +38,68 @@ const createNote = async(req, res) => {
 
 // delete note
 const deleteNote = async(req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedNote = await Note.findOneAndDelete(id);
+        
+        if(!deletedNote){
+            return res.status(404).json({
+            success: false,
+            message: "Note not found"
+        });
+        }
 
+        res.status(200).json({
+            success: true,
+            message: "Note deleted successfully",
+            data: deletedNote
+        });
+
+    } catch (error) {
+        console.error("error in deleting Note", message.error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error while deleting note"
+        })
+    }
 }
 
 // update note
+const updateNote = async(req, res) => {
+    const {id} = req.params;
+    const {title, description} = req.body;
+
+
+    if(!title && !description){
+        return res.status(400).json({
+            success: false,
+            message: "please provide all fileds"
+        })
+    }
+
+    try {
+        const updatedNote = await Note.findByIdAndUpdate(id,
+            {
+            title,
+            description
+        });
+        res.status(200).json({
+            success: true,
+            message: "Note updated successfully",
+            data: updatedNote
+        })
+    } catch (error) {
+        console.error("error in updating Note", message.error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+};
 
 
 export {
-    createNote
+    createNote,
+    deleteNote,
+    updateNote
 }
