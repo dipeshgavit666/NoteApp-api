@@ -1,8 +1,21 @@
 import Note from "../models/notes.model.js"
 
-// view all notes
+// get all notes
 const getAllNotes = async(req, res) => {
-    const notes = await Note.findOne()
+    try {
+        const allnotes = await Note.find({});
+        res.status(200).json({
+            success: true,
+            message: "All Notes",
+            data: allnotes
+        })
+    } catch (error) {
+        console.error("error in getting all Notes", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
 }
 
 //  create Note
@@ -89,7 +102,7 @@ const updateNote = async(req, res) => {
             data: updatedNote
         })
     } catch (error) {
-        console.error("error in updating Note", message.error);
+        console.error("error in updating Note", error.message);
         res.status(500).json({
             success: false,
             message: "Internal server error"
@@ -101,5 +114,6 @@ const updateNote = async(req, res) => {
 export {
     createNote,
     deleteNote,
-    updateNote
+    updateNote,
+    getAllNotes
 }
