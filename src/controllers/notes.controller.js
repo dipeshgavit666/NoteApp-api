@@ -1,115 +1,100 @@
 import Note from "../models/notes.model.js"
-
+import { ApiError } from "../utils/api-error.js";
+import { ApiResponse } from "../utils/api-response.js";
+import { asyncHandler } from "../utils/async-handler.js";
 // get all notes
-const getAllNotes = async(req, res) => {
+const getAllNotes = asyncHandler(async(req, res) => {
     try {
         const allnotes = await Note.find({});
-        res.status(200).json({
-            success: true,
-            message: "All Notes",
-            data: allnotes
-        })
+        return res
+         .status(200)
+         .json(new ApiResponse(
+            200,
+            {notes: allnotes},
+            "All notes fetcjed successfully"
+         ));
     } catch (error) {
-        console.error("error in getting all Notes", error.message);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
+        throw new ApiError(500, "Server error")
     }
-}
+})
 
 //  create Note
-const createNote = async(req, res) => {
-    const {title, description} = req.body;
-
-
-    if(!title && !description){
-        return res.status(400).json({
-            success: false,
-            message: "please provide all fileds"
-        })
-    }
+const createNote = asyncHandler(async(req, res) => {
+    
 
     try {
+        const {title, description} = req.body;
+
+
+        if(!title && !description){
+            throw new ApiError(400, "please provide all fileds");
+        }
+
         const newNote = await Note.create({
             title,
             description
         });
-        res.status(200).json({
-            success: true,
-            message: "Note created successfully",
-            data: newNote
-        })
+        return res
+         .status(201)
+         .json(new ApiResponse(
+            201,
+            {newNote},
+            "Note created successfully"
+         ))
     } catch (error) {
-        console.error("error in creating new Note", error.message);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
+        throw new ApiError(500, "Server error")
     }
-};
+});
 
 // delete note
-const deleteNote = async(req, res) => {
+const deleteNote = asyncHandler(async(req, res) => {
     try {
         const { id } = req.params;
         const deletedNote = await Note.findOneAndDelete(id);
         
         if(!deletedNote){
-            return res.status(404).json({
-            success: false,
-            message: "Note not found"
-        });
+            throw new ApiError(404, "Note not found")
         }
-
-        res.status(200).json({
-            success: true,
-            message: "Note deleted successfully",
-            data: deletedNote
-        });
+        
+        return res
+         .status(200)
+         .json(new ApiResponse(
+            200,
+            {},
+            "Note deleted successfully"))
 
     } catch (error) {
-        console.error("error in deleting Note", error.message);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error while deleting note"
-        })
+        throw new ApiError(500, "Server error")
     }
-}
+});
 
 // update note
 const updateNote = async (req, res) => {
   const { id } = req.params;
   const note = req.body;
 
-  if(!mongoose.Types.ObjectId.isValid(id)){
-    return res.status(404).json({success: false, message: "Invalid Note ID"});
-  }
 
   try {
+    const { id } = req.params;
+    const note = req.body;
 
     const updatedNote = await Note.findByIdAndUpdate(id, note);
 
     if (!updatedNote) {
-      return res.status(404).json({
-        success: false,
-        message: "Note not found",
-      });
+      throw new ApiError(404, "Note not found")
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Note updated successfully",
-      data: updatedNote,
-    });
+    return res
+     .status(200)
+      .json(
+      200,
+      {updatedNote},
+      "Note updated successfully"
+    );
   } catch (error) {
-    console.error("Error in updating Note:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    throw new ApiError(500, "Server error")
   }
-};
+});
 
 
 export {
