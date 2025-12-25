@@ -11,10 +11,10 @@ app.use(express.static("public"));
 
 //cors config
 app.use(cors({
-    origin:process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    origin:process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173" || "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowheaders: ["Content-Type", "Authorization"]
+    allowedheaders: ["Content-Type", "Authorization"]
 }));
 
 

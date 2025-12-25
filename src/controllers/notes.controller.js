@@ -41,7 +41,7 @@ const createNote = async(req, res) => {
             data: newNote
         })
     } catch (error) {
-        console.error("error in creating new Note", message.error);
+        console.error("error in creating new Note", error.message);
         res.status(500).json({
             success: false,
             message: "Internal server error"
@@ -69,7 +69,7 @@ const deleteNote = async(req, res) => {
         });
 
     } catch (error) {
-        console.error("error in deleting Note", message.error);
+        console.error("error in deleting Note", error.message);
         res.status(500).json({
             success: false,
             message: "Internal server error while deleting note"
@@ -78,36 +78,34 @@ const deleteNote = async(req, res) => {
 }
 
 // update note
-const updateNote = async(req, res) => {
-    const {id} = req.params;
-    const {title, description} = req.body;
+const updateNote = async (req, res) => {
+  const { id } = req.params;
+  const note = req.body;
 
 
-    if(!title && !description){
-        return res.status(400).json({
-            success: false,
-            message: "please provide all fileds"
-        })
+  try {
+
+    const updatedNote = await Note.findByIdAndUpdate(id, note);
+
+    if (!updatedNote) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+      });
     }
 
-    try {
-        const updatedNote = await Note.findByIdAndUpdate(id,
-            {
-            title,
-            description
-        });
-        res.status(200).json({
-            success: true,
-            message: "Note updated successfully",
-            data: updatedNote
-        })
-    } catch (error) {
-        console.error("error in updating Note", error.message);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-    }
+    res.status(200).json({
+      success: true,
+      message: "Note updated successfully",
+      data: updatedNote,
+    });
+  } catch (error) {
+    console.error("Error in updating Note:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
 
