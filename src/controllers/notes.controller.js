@@ -69,7 +69,7 @@ const deleteNote = asyncHandler(async(req, res) => {
 });
 
 // update note
-const updateNote = async (req, res) => {
+const updateNote = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const note = req.body;
 
