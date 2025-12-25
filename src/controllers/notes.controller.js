@@ -82,6 +82,9 @@ const updateNote = async (req, res) => {
   const { id } = req.params;
   const note = req.body;
 
+  if(!mongoose.Types.ObjectId.isValid(id)){
+    return res.status(404).json({success: false, message: "Invalid Note ID"});
+  }
 
   try {
 
