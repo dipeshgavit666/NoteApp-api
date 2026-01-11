@@ -26,7 +26,7 @@ const createNote = asyncHandler(async(req, res) => {
         const {title, description} = req.body;
 
 
-        if(!title && !description){
+        if(!title || !description){
             throw new ApiError(400, "please provide all fileds");
         }
 

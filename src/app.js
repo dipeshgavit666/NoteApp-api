@@ -11,13 +11,12 @@ app.use(express.static("public"));
 
 //cors config
 app.use(cors({
-    origin:process.env.CORS_ORIGIN?.split(",") || "http://localhost:5174",
+    origin:process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedheaders: ["Content-Type", "Authorization"]
 }));
 
-app.use(express.json);
 
 //import routs
 import notesRouter from "./routes/notes.routes.js";
